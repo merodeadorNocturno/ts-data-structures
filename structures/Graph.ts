@@ -1,28 +1,52 @@
+/**
+ * This module provides implementations for Directed and Unidirected Graphs.
+ * Graphs require node data to implement the `DataShapeWithValue` interface.
+ * @module
+ */
 import type { DataShapeWithValue } from "../interfaces/Comparable.ts";
 
-// Class to represent an edge in the graph
+/**
+ * Represents an edge connecting two nodes in a graph.
+ * An edge can optionally have a weight.
+ */
 class GraphEdge<T extends DataShapeWithValue> {
+  /**
+   * @param target The data of the target node of this edge.
+   * @param weight Optional weight associated with the edge.
+   */
   constructor(
-    public target: T, // The data of the target node
-    public weight?: number, // Optional weight for the edge
+    public target: T,
+    public weight?: number,
   ) {}
 }
 
-// Common methods for both directed and undirected graphs
+/**
+ * Provides common methods and properties for graph implementations (Directed and Unidirected).
+ * It manages the nodes and the adjacency list.
+ */
 class CommonGraphMethods<T extends DataShapeWithValue> {
-  // Use a Map for adjacency list: maps source node data to a list of outgoing edges
+  /**
+   * Use a Map for adjacency list: maps source node data to a list of outgoing edges.
+   * The key is the source node's data, and the value is an array of `GraphEdge` objects.
+   */
   protected adjacencyList: Map<T, GraphEdge<T>[]>;
-  // Keep track of all nodes in the graph
+  /**
+   * Keep track of all nodes added to the graph.
+   */
   protected nodes: T[];
 
+  /**
+   * Constructs a new CommonGraphMethods instance, initializing the adjacency list and nodes array.
+   */
   constructor() {
     this.adjacencyList = new Map();
     this.nodes = [];
   }
 
   /**
+  /**
    * Adds a node to the graph if it doesn't already exist.
-   * @param data The data for the new node.
+   * @param data The data for the new node. Must implement `DataShapeWithValue`.
    */
   addNode(data: T): void {
     // Use JSON.stringify for reliable Map key comparison with objects,
@@ -38,8 +62,9 @@ class CommonGraphMethods<T extends DataShapeWithValue> {
   }
 
   /**
-   * Checks if a node exists in the graph.
-   * @param data The data of the node to check.
+  /**
+   * Checks if a node with the given data exists in the graph.
+   * @param data The data of the node to check for existence. Must implement `DataShapeWithValue`.
    * @returns true if the node exists, false otherwise.
    */
   hasNode(data: T): boolean {
@@ -47,17 +72,19 @@ class CommonGraphMethods<T extends DataShapeWithValue> {
   }
 
   /**
+  /**
    * Gets all nodes currently in the graph.
-   * @returns An array of node data.
+   * @returns An array containing the data of all nodes in the graph.
    */
   getNodes(): T[] {
     return this.nodes;
   }
 
   /**
+  /**
    * Gets the outgoing edges (neighbors) for a given node.
-   * @param data The data of the source node.
-   * @returns An array of GraphEdge objects, or undefined if the node is not found.
+   * @param data The data of the source node. Must implement `DataShapeWithValue`.
+   * @returns An array of `GraphEdge` objects representing the outgoing edges, or `undefined` if the node is not found.
    */
   getNeighbors(data: T): GraphEdge<T>[] | undefined {
     return this.adjacencyList.get(data);
@@ -67,8 +94,10 @@ class CommonGraphMethods<T extends DataShapeWithValue> {
   // so they are defined in the respective subclasses.
 
   /**
+  /**
    * Performs a Breadth-First Search (BFS) traversal starting from a given node.
-   * @param startNodeData The data of the node to start the traversal from.
+   * Visits nodes layer by layer.
+   * @param startNodeData The data of the node to start the traversal from. Must implement `DataShapeWithValue`.
    * @param processNode A callback function to execute on the data of each visited node.
    */
   bfs(startNodeData: T, processNode: (data: T) => void): void {
@@ -111,8 +140,10 @@ class CommonGraphMethods<T extends DataShapeWithValue> {
   }
 
   /**
+  /**
    * Performs a Depth-First Search (DFS) traversal starting from a given node.
-   * @param startNodeData The data of the node to start the traversal from.
+   * Visits nodes by exploring as far as possible along each branch before backtracking.
+   * @param startNodeData The data of the node to start the traversal from. Must implement `DataShapeWithValue`.
    * @param processNode A callback function to execute on the data of each visited node.
    */
   dfs(startNodeData: T, processNode: (data: T) => void): void {
@@ -159,18 +190,29 @@ class CommonGraphMethods<T extends DataShapeWithValue> {
   }
 }
 
+/**
+ * Represents a Directed Graph (Digraph).
+ * Edges in a directed graph have a specific direction from a source node to a target node.
+ * Node data must implement the `DataShapeWithValue` interface.
+ */
 export class Directed<
   T extends DataShapeWithValue,
 > extends CommonGraphMethods<T> {
+  /**
+   * Constructs a new Directed Graph.
+   */
   constructor() {
     super();
     console.log("Created a Directed Graph");
   }
 
   /**
+  /**
    * Adds an unweighted directed edge from one node to another.
-   * @param from The data of the source node.
-   * @param to The data of the target node.
+   * The edge goes from the `from` node to the `to` node.
+   * Nodes must already exist in the graph.
+   * @param from The data of the source node. Must implement `DataShapeWithValue`.
+   * @param to The data of the target node. Must implement `DataShapeWithValue`.
    */
   addEdge(from: T, to: T): void {
     // Ensure both nodes exist before adding edge
@@ -187,9 +229,12 @@ export class Directed<
   }
 
   /**
+  /**
    * Adds a weighted directed edge from one node to another.
-   * @param from The data of the source node.
-   * @param to The data of the target node.
+   * The edge goes from the `from` node to the `to` node with the specified weight.
+   * Nodes must already exist in the graph.
+   * @param from The data of the source node. Must implement `DataShapeWithValue`.
+   * @param to The data of the target node. Must implement `DataShapeWithValue`.
    * @param weight The weight of the edge.
    */
   addWeightedEdge(from: T, to: T, weight: number): void {
@@ -209,9 +254,17 @@ export class Directed<
   }
 }
 
+/**
+ * Represents an Unidirected Graph.
+ * Edges in an unidirected graph connect two nodes symmetrically, implying traversal is possible in both directions.
+ * Node data must implement the `DataShapeWithValue` interface.
+ */
 export class Unidirected<
   T extends DataShapeWithValue,
 > extends CommonGraphMethods<T> {
+  /**
+   * Constructs a new Unidirected Graph.
+   */
   constructor() {
     super();
     console.log("Created an Unidirected Graph");
@@ -219,9 +272,12 @@ export class Unidirected<
 
   /**
    * Adds an unweighted unidirected edge between two nodes.
-   * This adds edges in both directions in the adjacency list.
-   * @param from The data of one node.
-   * @param to The data of the other node.
+  /**
+   * Adds an unweighted unidirected edge between two nodes.
+   * This creates symmetric edges in the adjacency list (from `from` to `to`, and from `to` to `from`).
+   * Nodes must already exist in the graph.
+   * @param from The data of one node involved in the edge. Must implement `DataShapeWithValue`.
+   * @param to The data of the other node involved in the edge. Must implement `DataShapeWithValue`.
    */
   addEdge(from: T, to: T): void {
     // Ensure both nodes exist before adding edge
@@ -240,9 +296,12 @@ export class Unidirected<
 
   /**
    * Adds a weighted unidirected edge between two nodes.
-   * This adds weighted edges in both directions with the same weight.
-   * @param from The data of one node.
-   * @param to The data of the other node.
+  /**
+   * Adds a weighted unidirected edge between two nodes.
+   * This creates symmetric weighted edges in the adjacency list with the same weight.
+   * Nodes must already exist in the graph.
+   * @param from The data of one node involved in the edge. Must implement `DataShapeWithValue`.
+   * @param to The data of the other node involved in the edge. Must implement `DataShapeWithValue`.
    * @param weight The weight of the edge.
    */
   addWeightedEdge(from: T, to: T, weight: number): void {
