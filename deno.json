@@ -1,0 +1,21 @@
+{
+  "name": "@choco/ts-data-structures",
+  "version": "0.1.0",
+  "license": "MIT",
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1"
+  },
+  "exports": {
+    "./interfaces/Comparable.ts": "./interfaces/Comparable.ts",
+    "./structures/BinaryTree.ts": "./structures/BinaryTree.ts",
+    "./structures/Graph.ts": "./structures/Graph.ts",
+    "./structures/Nodes.ts": "./structures/Nodes.ts",
+    "./structures/Queue.ts": "./structures/Queue.ts",
+    "./structures/SinglyLinkedList.ts": "./structures/SinglyLinkedList.ts",
+    "./structures/Stack.ts": "./structures/Stack.ts"
+  },
+  "exclude": ["./.zed"]
+}
