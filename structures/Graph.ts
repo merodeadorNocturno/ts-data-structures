@@ -24,7 +24,7 @@ class GraphEdge<T extends DataShapeWithValue> {
  * Provides common methods and properties for graph implementations (Directed and Unidirected).
  * It manages the nodes and the adjacency list.
  */
-class CommonGraphMethods<T extends DataShapeWithValue> {
+export class CommonGraphMethods<T extends DataShapeWithValue> {
   /**
    * Use a Map for adjacency list: maps source node data to a list of outgoing edges.
    * The key is the source node's data, and the value is an array of `GraphEdge` objects.
@@ -62,7 +62,6 @@ class CommonGraphMethods<T extends DataShapeWithValue> {
   }
 
   /**
-  /**
    * Checks if a node with the given data exists in the graph.
    * @param data The data of the node to check for existence. Must implement `DataShapeWithValue`.
    * @returns true if the node exists, false otherwise.
@@ -71,7 +70,6 @@ class CommonGraphMethods<T extends DataShapeWithValue> {
     return this.adjacencyList.has(data);
   }
 
-  /**
   /**
    * Gets all nodes currently in the graph.
    * @returns An array containing the data of all nodes in the graph.
