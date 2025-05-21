@@ -234,5 +234,3 @@ deno run main.ts
 ```
 
 Feel free to contribute by opening issues or pull requests on the project's repository.
-
-```
