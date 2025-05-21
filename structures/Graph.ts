@@ -44,7 +44,6 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
   }
 
   /**
-  /**
    * Adds a node to the graph if it doesn't already exist.
    * @param data The data for the new node. Must implement `DataShapeWithValue`.
    */
@@ -79,7 +78,6 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
   }
 
   /**
-  /**
    * Gets the outgoing edges (neighbors) for a given node.
    * @param data The data of the source node. Must implement `DataShapeWithValue`.
    * @returns An array of `GraphEdge` objects representing the outgoing edges, or `undefined` if the node is not found.
@@ -91,7 +89,6 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
   // addEdge and addWeightedEdge implementations differ for directed/undirected,
   // so they are defined in the respective subclasses.
 
-  /**
   /**
    * Performs a Breadth-First Search (BFS) traversal starting from a given node.
    * Visits nodes layer by layer.
@@ -137,7 +134,6 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
     }
   }
 
-  /**
   /**
    * Performs a Depth-First Search (DFS) traversal starting from a given node.
    * Visits nodes by exploring as far as possible along each branch before backtracking.
@@ -205,7 +201,6 @@ export class Directed<
   }
 
   /**
-  /**
    * Adds an unweighted directed edge from one node to another.
    * The edge goes from the `from` node to the `to` node.
    * Nodes must already exist in the graph.
@@ -226,7 +221,6 @@ export class Directed<
     console.log(`Added directed edge from ${from.value} to ${to.value}`);
   }
 
-  /**
   /**
    * Adds a weighted directed edge from one node to another.
    * The edge goes from the `from` node to the `to` node with the specified weight.
@@ -270,8 +264,6 @@ export class Unidirected<
 
   /**
    * Adds an unweighted unidirected edge between two nodes.
-  /**
-   * Adds an unweighted unidirected edge between two nodes.
    * This creates symmetric edges in the adjacency list (from `from` to `to`, and from `to` to `from`).
    * Nodes must already exist in the graph.
    * @param from The data of one node involved in the edge. Must implement `DataShapeWithValue`.
@@ -292,8 +284,6 @@ export class Unidirected<
     console.log(`Added unidirected edge between ${from.value} and ${to.value}`);
   }
 
-  /**
-   * Adds a weighted unidirected edge between two nodes.
   /**
    * Adds a weighted unidirected edge between two nodes.
    * This creates symmetric weighted edges in the adjacency list with the same weight.
