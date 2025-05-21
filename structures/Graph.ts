@@ -31,6 +31,10 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
    */
   protected adjacencyList: Map<T, GraphEdge<T>[]>;
   /**
+   * A map to quickly look up node data by its value.
+   */
+  protected nodeMap: Map<number, T>;
+  /**
    * Keep track of all nodes added to the graph.
    */
   protected nodes: T[];
@@ -40,6 +44,7 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
    */
   constructor() {
     this.adjacencyList = new Map();
+    this.nodeMap = new Map();
     this.nodes = [];
   }
 
@@ -53,6 +58,7 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
     // Let's assume object reference equality or unique data values for simplicity here.
     if (!this.adjacencyList.has(data)) {
       this.adjacencyList.set(data, []);
+      this.nodeMap.set(data.value, data); // Map value to node object
       this.nodes.push(data);
       // console.log(`Added node with data: ${data.value}`); // Assuming T has a value property - disable for cleaner output
     } else {
@@ -181,6 +187,106 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
         }
       }
     }
+  }
+
+  /**
+   * Implements Dijkstra's algorithm to find the shortest paths from a start node
+   * to all other reachable nodes in the graph.
+   * This implementation uses a simple linear scan to find the minimum distance node,
+   * which is suitable for smaller graphs. For larger graphs, a priority queue
+   * would significantly improve performance.
+   * Edges must have non-negative weights.
+   *
+   * @param startNodeData The data of the node to start the algorithm from. Must implement `DataShapeWithValue`.
+   * @returns A tuple containing:
+   *          - distances: A Map where keys are node data (T) and values are the shortest distance from the start node. Infinity if unreachable.
+   *          - predecessors: A Map where keys are node data (T) and values are the predecessor node data (T) on the shortest path from the start node, or null for the start node.
+   */
+  dijkstra(startNodeData: T): {
+    distances: Map<number, number>;
+    predecessors: Map<number, T | null>;
+  } {
+    // Check if the start node exists in the graph
+    if (!this.hasNode(startNodeData)) {
+      console.error(
+        `Dijkstra failed: Start node with data ${startNodeData.value} not found.`,
+      );
+      // Return empty results or throw an error
+      return { distances: new Map(), predecessors: new Map() };
+    }
+
+    const distances: Map<number, number> = new Map();
+    const predecessors: Map<number, T | null> = new Map();
+    // Using a Set for unvisited node values for easy deletion
+    const unvisited: Set<number> = new Set(
+      this.nodes.map((node) => node.value),
+    ); // Initialize with all node values
+
+    // Initialize distances and predecessors
+    for (const node of this.nodes) {
+      distances.set(node.value, Infinity);
+      predecessors.set(node.value, null);
+    }
+
+    // Distance from start node to itself is 0
+    distances.set(startNodeData.value, 0);
+
+    // Process nodes while there are unvisited nodes
+    while (unvisited.size > 0) {
+      // Find the unvisited node value with the smallest distance
+      let currentNodeValue: number | null = null;
+      let minDistance = Infinity;
+
+      // Simple linear scan for minimum distance (replace with Priority Queue for large graphs)
+      for (const nodeValue of unvisited) {
+        if (distances.get(nodeValue)! < minDistance) {
+          minDistance = distances.get(nodeValue)!;
+          currentNodeValue = nodeValue;
+        }
+      }
+
+      // If the minimum distance is Infinity, all remaining unvisited nodes are unreachable
+      if (currentNodeValue === null || minDistance === Infinity) {
+        break;
+      }
+
+      // Remove the current node value from the unvisited set
+      unvisited.delete(currentNodeValue);
+
+      // Get the actual node object to find neighbors
+      const currentNode = this.nodeMap.get(currentNodeValue)!;
+
+      // Update distances of neighbors
+      const neighbors = this.getNeighbors(currentNode);
+      if (neighbors) {
+        for (const edge of neighbors) {
+          const neighbor = edge.target;
+          const weight = edge.weight ?? 1; // Assume weight is 1 if not specified (for unweighted graph behavior)
+
+          // Check for negative weights (Dijkstra requires non-negative weights)
+          if (weight < 0) {
+            console.error(
+              "Dijkstra requires non-negative edge weights. Found negative weight.",
+            );
+            // Depending on requirements, you might want to return null, throw error, or return current state
+            return { distances: new Map(), predecessors: new Map() }; // Abort or handle appropriately
+          }
+
+          // Only consider unvisited neighbors
+          if (unvisited.has(neighbor.value)) {
+            const newDistance = distances.get(currentNode.value)! + weight;
+
+            // If a shorter path to the neighbor is found
+            if (newDistance < distances.get(neighbor.value)!) {
+              distances.set(neighbor.value, newDistance);
+              predecessors.set(neighbor.value, currentNode);
+            }
+          }
+        }
+      }
+    }
+
+    return { distances, predecessors };
   }
 }
 
