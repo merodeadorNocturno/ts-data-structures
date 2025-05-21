@@ -237,7 +237,7 @@ export class CommonGraphMethods<T extends DataShapeWithValue> {
       let currentNodeValue: number | null = null;
       let minDistance = Infinity;
 
-      // Simple linear scan for minimum distance (replace with Priority Queue for large graphs)
+      // Simple linear scan for minimum distance (TODO:replace with Priority Queue for large graphs)
       for (const nodeValue of unvisited) {
         if (distances.get(nodeValue)! < minDistance) {
           minDistance = distances.get(nodeValue)!;

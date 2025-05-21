@@ -43,7 +43,7 @@ Here are some basic examples of how to use a few of the data structures:
 ### Queue Example
 
 ```typescript
-import { Queue } from "jsr:@choco/ts-data-structures"; // Replace with your actual JSR package name
+import { Queue } from "jsr:@choco/ts-data-structures";
 
 const queue = new Queue<string>();
 queue.enqueue("first");
@@ -57,7 +57,7 @@ console.log("Peek after dequeue:", queue.peek());
 ### Stack Example
 
 ```typescript
-import { Stack } from "jsr:@choco/ts-data-structures"; // Replace with your actual JSR package name
+import { Stack } from "jsr:@choco/ts-data-structures";
 
 const stack = new Stack<number>();
 stack.push(10);
@@ -71,7 +71,7 @@ console.log("Peek after pop:", stack.peek());
 ### Singly Linked List Example
 
 ```typescript
-import { SinglyLinkedList, DataShapeWithValue } from "jsr:@choco/ts-data-structures"; // Replace with your actual JSR package name
+import { SinglyLinkedList, DataShapeWithValue } from "jsr:@choco/ts-data-structures";
 
 // Define a simple data type implementing DataShapeWithValue for the example
 interface SimpleData extends DataShapeWithValue {
@@ -101,7 +101,7 @@ while (current !== null) {
 ### Binary Tree Example
 
 ```typescript
-import { BinaryTree, Comparable, DataShapeWithValue, NumberWrapper } from "jsr:@choco/ts-data-structures"; // Replace with your actual JSR package name
+import { BinaryTree, Comparable, DataShapeWithValue, NumberWrapper } from "jsr:@choco/ts-data-structures";
 
 // BinaryTree requires a type that implements Comparable and has a fromString static method.
 // NumberWrapper is provided as an example.
@@ -121,7 +121,7 @@ console.log("Contains 100:", tree.contains(new NumberWrapper(100)));
 ### Graph Example
 
 ```typescript
-import { Directed, Unidirected, DataShapeWithValue } from "jsr:@choco/ts-data-structures"; // Replace with your actual JSR package name
+import { Directed, Unidirected, DataShapeWithValue } from "jsr:@choco/ts-data-structures";
 
 // Define a simple data type implementing DataShapeWithValue for the example
 interface GraphData extends DataShapeWithValue {
@@ -154,6 +154,62 @@ unidirectedGraph.addWeightedEdge(nodeB, nodeC, 10); // B <-> C with weight 10
 
 console.log("\nUnidirected Graph DFS from A:");
 unidirectedGraph.dfs(nodeA, (data) => console.log(`- Visited node: ${data.id} (Value: ${data.value})`));
+```
+
+### Dijkstra's Algorithm Example
+
+Dijkstra's algorithm finds the shortest paths from a single source node to all other nodes in a graph with non-negative edge weights. The `dijkstra` method is available on both `Directed` and `Unidirected` graph instances. It returns maps of shortest distances and predecessors for path reconstruction.
+
+```typescript
+import { Unidirected, DataShapeWithValue } from "jsr:@choco/ts-data-structures";
+
+// Define a simple data type implementing DataShapeWithValue
+interface WeightedGraphData extends DataShapeWithValue {
+    id: string;
+    value: number; // Required by DataShapeWithValue
+}
+
+const node1: WeightedGraphData = { id: "A", value: 10 };
+const node2: WeightedGraphData = { id: "B", value: 20 };
+const node3: WeightedGraphData = { id: "C", value: 30 };
+const node4: WeightedGraphData = { id: "D", value: 40 };
+const node5: WeightedGraphData = { id: "E", value: 50 };
+
+
+const weightedGraph = new Unidirected<WeightedGraphData>();
+
+weightedGraph.addNode(node1); // A (10)
+weightedGraph.addNode(node2); // B (20)
+weightedGraph.addNode(node3); // C (30)
+weightedGraph.addNode(node4); // D (40)
+weightedGraph.addNode(node5); // E (50)
+
+// Edges with weights:
+// A-B (4), A-C (2)
+// B-E (3), B-D (2)
+// C-D (4), C-E (5)
+// D-E (1)
+
+weightedGraph.addWeightedEdge(node1, node2, 4); // A-B
+weightedGraph.addWeightedEdge(node1, node3, 2); // A-C
+weightedGraph.addWeightedEdge(node2, node5, 3); // B-E
+weightedGraph.addWeightedEdge(node2, node4, 2); // B-D
+weightedGraph.addWeightedEdge(node3, node4, 4); // C-D
+weightedGraph.addWeightedEdge(node3, node5, 5); // C-E
+weightedGraph.addWeightedEdge(node4, node5, 1); // D-E
+
+console.log("\nDijkstra's Algorithm from A:");
+const { distances, predecessors } = weightedGraph.dijkstra(node1);
+
+console.log("Distances from A:");
+for (const [nodeValue, distance] of distances.entries()) {
+    console.log(`- Node with value ${nodeValue}: ${distance === Infinity ? "Infinity" : distance}`);
+}
+
+console.log("\nPredecessors in shortest path from A:");
+for (const [nodeValue, predecessor] of predecessors.entries()) {
+    console.log(`- Node with value ${nodeValue}: ${predecessor ? `via Node with value ${predecessor.value}` : "Start Node"}`);
+}
 ```
 
 ## Development
